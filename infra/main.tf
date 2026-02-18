@@ -41,3 +41,36 @@ resource "azurerm_subnet" "private_endpoint" {
 
   private_endpoint_network_policies = "Disabled"
 }
+resource "azurerm_private_dns_zone" "appservice" {
+  name                = "privatelink.azurewebsites.net"
+  resource_group_name = azurerm_resource_group.app.name
+}
+resource "azurerm_private_dns_zone_virtual_network_link" "dns_link" {
+  name                  = "appservice-dns-link"
+  resource_group_name   = azurerm_resource_group.app.name
+  private_dns_zone_name = azurerm_private_dns_zone.appservice.name
+  virtual_network_id    = azurerm_virtual_network.vnet.id
+}
+
+resource "azurerm_private_endpoint" "backend_pe" {
+  name                = "pe-backend-app"
+  location            = azurerm_resource_group.app.location
+  resource_group_name = azurerm_resource_group.app.name
+  subnet_id           = azurerm_subnet.private_endpoint.id
+
+  private_service_connection {
+    name                           = "psc-backend-app"
+    private_connection_resource_id = azurerm_linux_web_app.backend.id
+    subresource_names              = ["sites"]
+    is_manual_connection           = false
+  }
+
+  private_dns_zone_group {
+    name = "default"
+
+    private_dns_zone_ids = [
+      azurerm_private_dns_zone.appservice.id
+    ]
+  }
+}
+
