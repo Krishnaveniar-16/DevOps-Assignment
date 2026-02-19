@@ -32,42 +32,42 @@ jobs:
           publish-profile: ${{ secrets.AZURE_BACKEND_PUBLISH_PROFILE }}
           package: ./backend
 
-  promote-staging:
-    name: Promote DEV → STAGING
-    needs: deploy-dev
-    runs-on: ubuntu-latest
-    environment: staging
+ # promote-staging:
+ #   name: Promote DEV → STAGING
+ #   needs: deploy-dev
+ #   runs-on: ubuntu-latest
+ #   environment: staging
 
-    steps:
-      - name: Azure Login
-        uses: azure/login@v2
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
+ #   steps:
+ #     - name: Azure Login
+ #       uses: azure/login@v2
+ #       with:
+ #         creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: Slot swap DEV → STAGING
-        run: |
-          az webapp deployment slot swap \
-            --resource-group rg-app \
-            --name backend-devops-assignment \
-            --slot dev \
-            --target-slot staging
+ #     - name: Slot swap DEV → STAGING
+ #       run: |
+ #         az webapp deployment slot swap \
+ #           --resource-group rg-app \
+ #           --name backend-devops-assignment \
+ #           --slot dev \
+ #           --target-slot staging
 
-  promote-prod:
-    name: Promote STAGING → PROD
-    needs: promote-staging
-    runs-on: ubuntu-latest
-    environment: production
+ # promote-prod:
+ #   name: Promote STAGING → PROD
+ #   needs: promote-staging
+ #   runs-on: ubuntu-latest
+ #   environment: production
 
-    steps:
-      - name: Azure Login
-        uses: azure/login@v2
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
+ #   steps:
+ #     - name: Azure Login
+ #       uses: azure/login@v2
+ #       with:
+ #         creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: Slot swap STAGING → PROD
-        run: |
-          az webapp deployment slot swap \
-            --resource-group rg-app \
-            --name backend-devops-assignment \
-            --slot staging \
-            --target-slot production
+     # - name: Slot swap STAGING → PROD
+     #   run: |
+     #     az webapp deployment slot swap \
+     #       --resource-group rg-app \
+     #       --name backend-devops-assignment \
+     #       --slot staging \
+     #       --target-slot production
