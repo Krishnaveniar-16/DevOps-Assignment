@@ -9,7 +9,7 @@ resource "azurerm_service_plan" "app_plan" {
   resource_group_name = azurerm_resource_group.app.name
 
   os_type  = "Linux"
-  sku_name = "B1"
+  sku_name = "S1"
 }
 resource "azurerm_linux_web_app" "backend" {
   name                = "backend-devops-assignment"
@@ -18,6 +18,8 @@ resource "azurerm_linux_web_app" "backend" {
   service_plan_id     = azurerm_service_plan.app_plan.id
 
   https_only = true
+  public_network_access_enabled = false
+
 
   site_config {
     always_on = true
@@ -27,6 +29,29 @@ resource "azurerm_linux_web_app" "backend" {
     ENVIRONMENT = "prod"
   }
 }
+resource "azurerm_linux_web_app_slot" "backend_dev" {
+  name           = "dev"
+  app_service_id = azurerm_linux_web_app.backend.id
+
+  site_config {}
+
+  app_settings = {
+    ENVIRONMENT = "dev"
+  }
+}
+
+resource "azurerm_linux_web_app_slot" "backend_staging" {
+  name           = "staging"
+  app_service_id = azurerm_linux_web_app.backend.id
+
+  site_config {}
+
+  app_settings = {
+    ENVIRONMENT = "staging"
+  }
+}
+
+
 resource "azurerm_virtual_network" "vnet" {
   name                = "vnet-app"
   address_space       = ["10.0.0.0/16"]
@@ -73,4 +98,42 @@ resource "azurerm_private_endpoint" "backend_pe" {
     ]
   }
 }
+resource "azurerm_linux_web_app" "frontend" {
+  name                = "frontend-devops-assignment"
+  location            = azurerm_resource_group.app.location
+  resource_group_name = azurerm_resource_group.app.name
+  service_plan_id     = azurerm_service_plan.app_plan.id
 
+  https_only = true
+
+  site_config {
+    always_on = true
+  }
+
+  app_settings = {
+    BACKEND_URL = "https://${azurerm_linux_web_app.backend.default_hostname}"
+  }
+}
+resource "azurerm_linux_web_app_slot" "frontend_dev" {
+  name           = "dev"
+  app_service_id = azurerm_linux_web_app.frontend.id
+
+  site_config {}
+
+  app_settings = {
+    ENVIRONMENT = "dev"
+    BACKEND_URL = "https://${azurerm_linux_web_app.backend.default_hostname}"
+  }
+}
+
+resource "azurerm_linux_web_app_slot" "frontend_staging" {
+  name           = "staging"
+  app_service_id = azurerm_linux_web_app.frontend.id
+
+  site_config {}
+
+  app_settings = {
+    ENVIRONMENT = "staging"
+    BACKEND_URL = "https://${azurerm_linux_web_app.backend.default_hostname}"
+  }
+}
