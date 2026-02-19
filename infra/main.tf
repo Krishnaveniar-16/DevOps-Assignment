@@ -23,6 +23,9 @@ resource "azurerm_linux_web_app" "backend" {
 
   site_config {
     always_on = true
+    application_stack {
+      python_version = "3.11"
+    }
   }
 
   app_settings = {
@@ -33,7 +36,11 @@ resource "azurerm_linux_web_app_slot" "backend_dev" {
   name           = "dev"
   app_service_id = azurerm_linux_web_app.backend.id
 
-  site_config {}
+  site_config {
+    application_stack {
+      python_version = "3.11"
+    }
+  }
 
   app_settings = {
     ENVIRONMENT = "dev"
@@ -44,7 +51,11 @@ resource "azurerm_linux_web_app_slot" "backend_staging" {
   name           = "staging"
   app_service_id = azurerm_linux_web_app.backend.id
 
-  site_config {}
+  site_config {
+    application_stack {
+      python_version = "3.11"
+    }
+  }
 
   app_settings = {
     ENVIRONMENT = "staging"
@@ -108,8 +119,11 @@ resource "azurerm_linux_web_app" "frontend" {
 
   site_config {
     always_on = true
+    application_stack {
+      node_version = "22-lts"
+    }
   }
-
+  
   app_settings = {
     BACKEND_URL = "https://${azurerm_linux_web_app.backend.default_hostname}"
   }
@@ -118,7 +132,11 @@ resource "azurerm_linux_web_app_slot" "frontend_dev" {
   name           = "dev"
   app_service_id = azurerm_linux_web_app.frontend.id
 
-  site_config {}
+  site_config {
+    application_stack {
+      node_version = "22-lts"
+    }
+  }
 
   app_settings = {
     ENVIRONMENT = "dev"
@@ -130,7 +148,11 @@ resource "azurerm_linux_web_app_slot" "frontend_staging" {
   name           = "staging"
   app_service_id = azurerm_linux_web_app.frontend.id
 
-  site_config {}
+  site_config {
+    application_stack {
+      node_version = "22-lts"
+    }
+  }
 
   app_settings = {
     ENVIRONMENT = "staging"
