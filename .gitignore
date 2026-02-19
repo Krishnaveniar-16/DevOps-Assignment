@@ -1,0 +1,11 @@
+# Terraform local state & cache
+**/.terraform/
+**/*.tfstate
+**/*.tfstate.backup
+
+# Terraform crash logs
+crash.log
+
+# OS files
+.DS_Store
+Thumbs.db
