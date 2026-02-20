@@ -4,4 +4,6 @@
 *.tfstate.backup
 .terraform.lock.hcl
 
-
+frontend/.env.local
+# Ignore entire infra directory
+infra/
