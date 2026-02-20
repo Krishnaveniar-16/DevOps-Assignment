@@ -25,6 +25,8 @@ jobs:
       - name: Build Next.js app
         run: npm run build
         working-directory: frontend
+        env:
+          NEXT_PUBLIC_API_URL: https://backend-devops-assignment-dev.azurewebsites.net
 
       - name: Deploy to DEV slot
         uses: azure/webapps-deploy@v3
